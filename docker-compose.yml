@@ -1,0 +1,11 @@
+services:
+  vigil:
+    build: .
+    container_name: vigil
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - /volume1/ytdlp-phone:/downloads
+      - ./data:/app/data
+    ports:
+      - "5005:5005" # Match the internal port 5005

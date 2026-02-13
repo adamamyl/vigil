@@ -1,0 +1,29 @@
+# Vigil - Git Ignore
+
+# Secrets & Config
+.env
+.env-template
+
+# Data & Database
+data/
+*.db
+*.log
+.archive.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.uv/
+build/
+dist/
+*.egg-info/
+
+# Downloads (Local testing)
+downloads/
+test_downloads/
+
+# OS specific
+.DS_Store
+Thumbs.db
