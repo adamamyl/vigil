@@ -5,7 +5,12 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - /volume1/ytdlp-phone:/downloads
+      - $DOWNLOAD_DIR:/downloads
       - ./data:/app/data
     ports:
       - "5005:5005" # Match the internal port 5005
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+  
