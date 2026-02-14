@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - $DOWNLOAD_DIR:/downloads
+      - /volume1/vigil-download:/downloads
       - ./data:/app/data
     ports:
       - "5005:5005" # Match the internal port 5005
