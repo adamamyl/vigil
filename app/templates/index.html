@@ -15,19 +15,25 @@
         .badge-failed { background-color: #e74c3c; }
         .btn-primary { background-color: #6200ee; border: none; }
         .btn-primary:hover { background-color: #7c4dff; }
+        .btn-outline-info { color: #03dac6; border-color: #03dac6; }
+        .btn-outline-info:hover { background-color: #03dac6; color: #000; }
+        .btn-outline-danger { border-color: #cf6679; color: #cf6679; }
+        .btn-outline-danger:hover { background-color: #cf6679; color: #fff; }
     </style>
 </head>
 <body>
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5 fw-bold">Vigil</h1>
+        <h1 class="display-5 fw-bold text-white">Vigil</h1>
         <span class="badge bg-outline-secondary border border-secondary text-secondary">4 AM Sweep Engine</span>
     </div>
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-transparent border-secondary">📥 Download Queue</div>
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-transparent border-secondary d-flex justify-content-between">
+                    <span>📥 Download Queue</span>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-dark table-hover align-middle">
@@ -36,19 +42,34 @@
                                     <th>Source URL</th>
                                     <th>Status</th>
                                     <th>Added</th>
+                                    <th class="text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in queue %}
                                 <tr>
-                                    <td class="text-truncate" style="max-width: 300px;">
+                                    <td class="text-truncate" style="max-width: 280px;">
                                         <small><a href="{{ item.url }}" target="_blank" class="text-info text-decoration-none">{{ item.url }}</a></small>
                                     </td>
                                     <td><span class="badge badge-{{ item.status }}">{{ item.status }}</span></td>
                                     <td><small class="text-muted">{{ item.created_at.strftime('%H:%M') }}</small></td>
+                                    <td class="text-end">
+                                        {# Only allow deletion if the item hasn't been successfully downloaded #}
+                                        {% if item.status in ['pending', 'failed'] %}
+                                        <form action="{{ url_for('delete_item', item_id=item.id) }}" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                    title="Remove from queue"
+                                                    onclick="return confirm('Remove this link from the queue?')">
+                                                &times;
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <span class="text-muted small">🔒</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% else %}
-                                <tr><td colspan="3" class="text-center py-4 text-muted">The watch is quiet. Queue is empty.</td></tr>
+                                <tr><td colspan="4" class="text-center py-4 text-muted">The watch is quiet. Queue is empty.</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -58,20 +79,37 @@
         </div>
 
         <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-transparent border-secondary text-info">➕ Add URL</div>
+                <div class="card-body">
+                    <form action="/add-url" method="post">
+                        <div class="mb-3">
+                            <input type="url" name="url" class="form-control bg-dark text-white border-secondary" 
+                                   placeholder="https://..." required>
+                        </div>
+                        <button type="submit" class="btn btn-outline-info w-100">Add to Queue</button>
+                    </form>
+                </div>
+            </div>
+
             <div class="card shadow-sm">
                 <div class="card-header bg-transparent border-secondary">🛠 Controls</div>
                 <div class="card-body">
                     <form action="/run-now" method="post">
                         <button type="submit" class="btn btn-primary w-100 py-2 mb-3">🚀 Run Manual Sweep</button>
                     </form>
-                    <p class="small text-muted mb-0">Vigil will automatically process all pending links at 04:00 daily.</p>
+                    <p class="small text-muted mb-0 text-center">
+                        Vigil will automatically process all pending links at 04:00 daily.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-</body>
-<footer class="mt-5 text-center text-muted">
-    <small>Vigil is currently on watch. Next scheduled sweep: 04:00.</small>
+
+<footer class="mt-5 text-center text-muted py-4">
+    <small>Vigil is currently on watch. Checking for new signals.</small>
 </footer>
+
+</body>
 </html>
