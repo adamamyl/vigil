@@ -2,7 +2,6 @@
 
 # Secrets & Config
 .env
-.env-template
 
 # Data & Database
 data/
